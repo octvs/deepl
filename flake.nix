@@ -31,6 +31,6 @@
       devShells.default = pkgs.mkShell {buildInputs = runtimeDeps;};
     })
     // {
-      overlays.default = final: prev: {shoppy = self.packages.${prev.system}.default;};
+      overlays.default = final: prev: {self.packages.${prev.system}.default.pname = self.packages.${prev.system}.default;};
     };
 }
