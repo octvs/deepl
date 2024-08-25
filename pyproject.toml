@@ -1,0 +1,13 @@
+[project]
+name = "deepl-cli"
+authors = [{ name = "O. C. Taskin", email = "orhuncenktaskin@gmail.com" }]
+version = "0.1"
+dependencies = ["deepl"]
+description = "a simple script to translate via deepl"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+translate = "main:main"
