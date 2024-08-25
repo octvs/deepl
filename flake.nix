@@ -11,7 +11,9 @@
     nixpkgs,
     flake-utils,
     ...
-  }:
+  }: let
+    name = "deepl";
+  in
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       runtimeDeps = with pkgs.python3Packages; [deepl];
@@ -19,7 +21,7 @@
     in {
       packages = rec {
         deepl = pkgs.python3Packages.buildPythonApplication {
-          pname = "deepl";
+          pname = "${name}";
           version = "0.1";
           pyproject = true;
           propagatedBuildInputs = runtimeDeps ++ buildDeps;
@@ -31,6 +33,6 @@
       devShells.default = pkgs.mkShell {buildInputs = runtimeDeps;};
     })
     // {
-      overlays.default = final: prev: {shoppy = self.packages.${prev.system}.default;};
+      overlays.default = final: prev: {"${name}" = self.packages.${prev.system}.default;};
     };
 }
