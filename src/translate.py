@@ -36,13 +36,9 @@ def main():
     ).group(1)
     translator = deepl.Translator(auth_key)
     input = sys.stdin.read()
-    print(
-        translator.translate_text(
-            input,
-            source_lang=languages[args._from],
-            target_lang=languages[args._to],
-        )
-    )
+    _fr = languages.get(args._from, args._from)
+    _to = languages.get(args._to, args._to)
+    print(translator.translate_text(input, source_lang=_fr, target_lang=_to))
 
 
 if __name__ == "__main__":
