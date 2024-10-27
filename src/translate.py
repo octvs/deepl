@@ -7,8 +7,8 @@ import sys
 import deepl
 
 
-def side_by_side(strings, terminal_w=os.get_terminal_size().columns, gap=4):
-    w = (terminal_w - gap - 1) // 2
+def side_by_side(strings, total_width, gap=4):
+    w = (total_width - gap - 1) // 2
     separator = " " * (gap // 2) + "|" + " " * (gap // 2)
     result = []
     while any(strings):
@@ -63,7 +63,11 @@ def main():
         source_lang=args._from.capitalize(),
         target_lang=args._to.capitalize(),
     )
-    print(side_by_side([input, result.text]))
+    try:
+        width = os.get_terminal_size().columns
+        print(side_by_side([input, result.text], width))
+    except OSError:
+        print(result.text)
 
 
 if __name__ == "__main__":
