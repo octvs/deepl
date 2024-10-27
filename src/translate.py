@@ -6,8 +6,6 @@ import sys
 
 import deepl
 
-languages = {"de": "DE", "en": "EN-US", "tr": "TR"}
-
 
 def side_by_side(strings, terminal_w=os.get_terminal_size().columns, gap=4):
     w = (terminal_w - gap - 1) // 2
@@ -56,10 +54,14 @@ def main():
     ).group(1)
     translator = deepl.Translator(auth_key)
     input = sys.stdin.read()
+
+    if args._to == "en":
+        args._to += "-us"
+
     result = translator.translate_text(
         input,
-        source_lang=languages[args._from],
-        target_lang=languages[args._to],
+        source_lang=args._from.capitalize(),
+        target_lang=args._to.capitalize(),
     )
     print(side_by_side([input, result.text]))
 
