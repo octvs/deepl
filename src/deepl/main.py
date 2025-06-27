@@ -65,7 +65,13 @@ def main():
     )
     try:
         width = os.get_terminal_size().columns
-        print(side_by_side([input, result.text], width))
+        if width > 100:
+            print(side_by_side([input, result.text], width))
+        else:
+            print(input)
+            print("-" * (width - 10))
+            print(result.text)
+
     except OSError:
         print(result.text)
 
