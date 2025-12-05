@@ -3,36 +3,28 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
+    flake-parts,
+    systems,
     ...
-  }: let
-    name = "deepl";
-  in
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-      runtimeDeps = with pkgs.python3Packages; [deepl];
-      buildDeps = with pkgs.python3Packages; [setuptools];
-    in {
-      packages = rec {
-        deepl = pkgs.python3Packages.buildPythonApplication {
-          pname = "${name}";
-          version = "0.1";
+  } @ inputs:
+    flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
+      systems = import systems;
+      perSystem = {pkgs, ...}: let
+        dependencies = with pkgs.python3.pkgs; [deepl];
+      in {
+        packages.default = pkgs.python3Packages.buildPythonApplication {
+          pname = "deepl";
+          version = "0-unstable";
           pyproject = true;
-          propagatedBuildInputs = runtimeDeps ++ buildDeps;
           src = ./.;
+          build-system = with pkgs.python3.pkgs; [setuptools];
+          inherit dependencies;
         };
-        default = deepl;
       };
-
-      devShells.default = pkgs.mkShell {buildInputs = runtimeDeps;};
-    })
-    // {
-      overlays.default = final: prev: {"${name}" = self.packages.${prev.system}.default;};
-    };
+    });
 }
